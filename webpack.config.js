@@ -3,7 +3,7 @@ const path = require('path');   // we hebben een absoluut path nodig
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: './src/js/index.js',   // hier begint webpack met packen
+    entry: ['babel-polyfill','./src/js/index.js'],   // hier begint webpack met packen, en dat moet dus ook 'vanuit' babel-polyfill
     output: {
         path: path.resolve(__dirname, 'dist'),           // we gebruiken een path method uit het ding van regel 2 om naar de juiste map te verwijzen. __dirname is the current absolute path, en die koppelen we aan de map waar we de bundel in willen hebben: dist/js
         filename: 'js/bundle.js'   // standaardnaam. Webpack zet dit zelf in een <script> in het html-bestand dat hieronder in de plugin wordt gemaakt
@@ -23,7 +23,7 @@ module.exports = {
                 test: /\.js$/,      // 'zoek naar alle bestanden die eindigen$ op .js'
                 exclude: /node_modules/,    // 'dwz alle .js-bestanden behalve die in de node_modules'. Soort .gitignore
                 use: {
-                    loader: 'babel-loader'
+                    loader: 'babel-loader'      // deze deed het om een of andere reden alleen als babel-loader@7, niet in een andere versie
                 }
             }
         ]

@@ -1,0 +1,12 @@
+{
+    "presets": [     // 'a preset is a collection of code transform plug-ins: the pieces of code that apply the actual transformations to our code'
+        ["env", {    // environment (= de browsers), zie ook het pakket in de package.json: babel-preset-env
+            "targets": {
+                "browsers": [
+                    "last 5 versions",   // 'hertaal ES6 terug naar ES5 zodat de laatste 5 versies van alle browsers het snappen'
+                    "ie >= 8"            // internet explorer versie 8 of later
+                ]
+            }
+        }]  
+    ]
+}
