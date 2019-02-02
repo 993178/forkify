@@ -9,10 +9,10 @@ export default class Search {
         this.query = query;
     }
     async getResults() {
-        const proxy = 'https://cors-anywhere.herokuapp.com/'
+        const proxy = 'https://cors-anywhere.herokuapp.com/'    // trucje om te zorgen dat hun server denkt dat wij op dezelfde server zitten
         const key = "c4cb44f2ca2dab584aabee22088a8215"      // dit is mijn API-key
         
-        try {         // Jonas doet await met try/catch, maar await met .catch werkt dus ook...
+        try {
             const res = await axios(`${proxy}https://www.food2fork.com/api/search?key=${key}&q=${this.query}`);   // key dus, en dan de q van query, wat de nog aan te leveren zoekterm is
             this.result = res.data.recipes;
         } catch (error) {

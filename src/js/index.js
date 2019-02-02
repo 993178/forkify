@@ -13,18 +13,23 @@ const state = {};
 
 const controlSearch = async () => {
     // get query from view
-    const query = 'pizza' // later
+    const query = searchView.getInput();            // dus query is de zoekopdracht
+    console.log("oh kijk nou toch, " + query);
     
     if (query) {
         // new search object and add to state
-        state.search = new Search(query);
+        state.search = new Search(query);           // en state.search is het search-object gemaakt met class Search waarin query een key is en result een andere key is met als value de receptenlijst die we met de API hebben binnengehengeld
 
         // prepare UI for results (loading spinner oid)
+        searchView.clearInput();
+        searchView.clearResults();
+        
         // search for recipes
         await state.search.getResults();
 
         // render results on UI
-        console.log(state.search.result);
+        //console.log(state.search.result);
+        searchView.renderResults(state.search.result)
     }
 }
 
@@ -32,5 +37,3 @@ elements.searchForm.addEventListener('submit', e => {     // eventlistener voor 
     e.preventDefault();     // we willen niet de pagina herladen bij het klikken op de searchknop
     controlSearch();        // we zetten wat er moet gebeuren apart, niet in deze callback
 })
-
-//search.getResults();
