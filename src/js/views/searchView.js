@@ -10,6 +10,20 @@ export const clearResults = () => {             // bij een nieuwe zoekopdracht w
     elements.searchResList.innerHTML = "";
 }
 
+const limitRecipeTitle = (title, limit = 17) => {   // Jonas wil graag de titel inkorten tot enkele hele woorden als die nu langer is dan één regel. (Categorie waarom makkelijk doen als het moeilijk kan)
+    const newTitle = [];                            // (Persoonlijk denk ik dat halve woorden een stuk beter zijn dan een recept dat alleen maar "beef & ..." heet.)
+    if (title.length > limit) {                     // Als de lengte van de titel meer dan 17 karakters is,
+        title.split(' ').reduce((teller, cur) => {  // splitsen we de titel op in individuele woorden door de spaties als afbreekpunt te gebruiken
+            if (teller + cur.length <= limit) {     // en kijken of de teller (=initial value, vorige item) plus de lengte van het huidige woord onder de limiet blijft
+                newTitle.push(cur);                 // Zo ja, dan pushen we dat huidige woord in de newTitle-array
+            }
+            return teller + cur.length              // Zo niet (?), dan returnen we de teller + de lengte van het huidige woord - dus eigenlijk wat je in de if gestopt hebt
+        }, 0);                                      // (initial value is 0)
+        return `${newTitle.join(' ')} ...`;         // 
+    }   // geen else, er hoeft niks specifieks te gebeuren als ie korter is dan 17
+    return title;
+}
+
 const renderRecipe = recipe => {
     const markup = `
         <li>
@@ -18,7 +32,7 @@ const renderRecipe = recipe => {
                     <img src="${recipe.image_url}" alt="${recipe.title}">
                 </figure>
                 <div class="results__data">
-                    <h4 class="results__name">${recipe.title}</h4>
+                    <h4 class="results__name">${limitRecipeTitle(recipe.title)}</h4>
                     <p class="results__author">${recipe.publisher}</p>
                 </div>
             </a>
