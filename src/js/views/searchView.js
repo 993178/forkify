@@ -25,10 +25,10 @@ const limitRecipeTitle = (title, limit = 17) => {   // Jonas wil graag de titel 
     return title;
 }
 
-const renderRecipe = recipe => {
+const renderRecipe = recipe => {            // regel 31: je zet de recipe_id in de href, dus dat is in het precieze adres: localhost:8080/?# en dan het ID-nummer van dat recept. Dat ding, # + nummer, heet de hash.
     const markup = `
         <li>
-            <a class="results__link results__link--active" href="#${recipe.recipe_id}">
+            <a class="results__link results__link--active" href="#${recipe.recipe_id}"> 
                 <figure class="results__fig">
                     <img src="${recipe.image_url}" alt="${recipe.title}">
                 </figure>

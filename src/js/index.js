@@ -1,6 +1,8 @@
 // Global app controller 
 import Search from './models/Search';
+import Recipe from './models/Recipe';
 import * as searchView from './views/searchView';
+import * as recipeView from './views/recipeView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
 
@@ -12,7 +14,9 @@ import { elements, renderLoader, clearLoader } from './views/base';
 const state = {};
 
 
-const controlSearch = async () => {
+//      SEARCH CONTROLLER
+
+const searchController = async () => {      // heet bij Jonas controlSearch, maar dat geeft teveel gekloot met Tab als ik console.log wil typen
     // get query from view
     const query = searchView.getInput();            // dus query is de zoekopdracht
     
@@ -25,19 +29,24 @@ const controlSearch = async () => {
         searchView.clearResults();
         renderLoader(elements.searchRes);
         
-        // search for recipes
-        await state.search.getResults();
+        try {
+            // search for recipes
+            await state.search.getResults();
 
-        // render results on UI
-        //console.log(state.search.result);
-        clearLoader();
-        searchView.renderResults(state.search.result)   // zonder tweede paramter voor page te definiëren, want 1 is al de default
+            // render results on UI
+            //console.log(state.search.result);
+            clearLoader();
+            searchView.renderResults(state.search.result)   // zonder tweede paramter voor page te definiëren, want 1 is al de default
+        } catch (error) {
+            alert('Something went wrong.......')
+            clearLoader();
+        }
     }
 }
 
 elements.searchForm.addEventListener('submit', e => {     // eventlistener voor het zoekveld
     e.preventDefault();     // we willen niet de pagina herladen bij het klikken op de searchknop
-    controlSearch();        // we zetten wat er moet gebeuren apart, niet in deze callback
+    searchController();        // we zetten wat er moet gebeuren apart, niet in deze callback
 });
 
 elements.searchResPages.addEventListener('click', e => {    // eventlistener voor de paginatieknoppen. Die knoppen zitten er nog niet, dus we plakken dit ding aan het ouderelement dat er wel is en laten de klik opborrelen om dan de bron van de klik op te sporen middels target
@@ -49,3 +58,40 @@ elements.searchResPages.addEventListener('click', e => {    // eventlistener voo
         searchView.renderResults(state.search.result, goToPage);
     }
 });
+
+
+//      RECIPE CONTROLLER
+
+const recipeController = async () => {
+    const id = window.location.hash.replace('#','');   // string.replace: vervang argument 1 door argument 2. We pakken hier de hash (zie searchView)
+
+    if (id) {
+        // prepare UI for changes
+        recipeView.clearRecipe();
+        renderLoader(elements.recipe);
+        // create new recipe object
+        state.recipe = new Recipe(id);  // dus een nieuw receptobject gaat ook weer de state in        
+        
+        try {
+            // get recipe data and parse ingredients
+            await state.recipe.getRecipe();
+            state.recipe.parseIngredients();
+            // calc servings and time
+            state.recipe.calcTime();
+            state.recipe.calcServings();
+            // render recipe
+            clearLoader();
+            recipeView.renderRecipe(state.recipe);
+
+        } catch (error) {
+            alert('That darn recipe just won\'t show up, I wouldn\'t take it if I were you!')
+        }
+    }
+}
+
+// window.addEventListener('hashchange', recipeController)
+// window.addEventListener('load', recipeController);
+
+// hoe zet je 1 eventlistener op 2 events?
+
+['hashchange', 'load'].forEach(event => window.addEventListener(event, recipeController));
