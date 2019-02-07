@@ -11,6 +11,15 @@ export const clearResults = () => {             // bij een nieuwe zoekopdracht w
     elements.searchResPages.innerHTML = "";     // zodat je geen stapel knoppen krijgt als je van de ene naar de andere pagina gaat
 }
 
+export const highlightSelected = id => {
+    const resultsArr = Array.from(document.querySelectorAll('.results__link'));     // een array met alle html-elementen met die class
+    resultsArr.forEach(el => {
+        el.classList.remove('results__link--active');
+    })
+
+    document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active');    // waarmee je het element met die specifieke href kunt selecteren...! a is van 'attribute'. Vervolgens voeg je dus een class toe aan dat element die zorgt voor de verandering in opmaak die je wilt
+}
+
 const limitRecipeTitle = (title, limit = 17) => {   // Jonas wil graag de titel inkorten tot enkele hele woorden als die nu langer is dan één regel. (Categorie waarom makkelijk doen als het moeilijk kan)
     const newTitle = [];                            // (Persoonlijk denk ik dat halve woorden een stuk beter zijn dan een recept dat alleen maar "beef & ..." heet.)
     if (title.length > limit) {                     // Als de lengte van de titel meer dan 17 karakters is,
