@@ -59,12 +59,12 @@ export const renderRecipe = recipe => {
                 <span class="recipe__info-text"> servings</span>
 
                 <div class="recipe__info-buttons">
-                    <button class="btn-tiny">
+                    <button class="btn-tiny btn-decrease">
                         <svg>
                             <use href="img/icons.svg#icon-circle-with-minus"></use>
                         </svg>
                     </button>
-                    <button class="btn-tiny">
+                    <button class="btn-tiny btn-increase">
                         <svg>
                             <use href="img/icons.svg#icon-circle-with-plus"></use>
                         </svg>
@@ -84,7 +84,7 @@ export const renderRecipe = recipe => {
                 ${recipe.ingredients.map(el => createIngredient(el)).join('')}
             </ul>
 
-            <button class="btn-small recipe__btn">
+            <button class="btn-small recipe__btn recipe__btn--add">
                 <svg class="search__icon">
                     <use href="img/icons.svg#icon-shopping-cart"></use>
                 </svg>
@@ -111,3 +111,13 @@ export const renderRecipe = recipe => {
 }
 
 // regel 62: we gebruiken join niet om dingen te lijmen maar eigenlijk puur om er weer tekst van te maken ipv een array in onze markup
+
+export const updateServingsIngredients = recipe => {
+    //update servngs
+    document.querySelector('.recipe__info-data--people').textContent = recipe.servings;
+    // update ingredients
+    const countElement = Array.from(document.querySelectorAll('.recipe__count'));   // we maken een array met alle classes waar een ingrediënthoeveelheid in staat
+    countElement.forEach((el, i) => {
+        el.textContent = formatCount(recipe.ingredients[i].count);      // voor ieder exemplaar van bovenstaande array laten we formatCount los op de count van ieder corresponderend item uit de ingrediëntenlijst en maken dat aantal de nieuwe tekstinhoud van dit array-element
+    });
+};

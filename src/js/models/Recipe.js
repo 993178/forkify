@@ -40,7 +40,7 @@ export default class Recipe {
                 ingredient = ingredient.replace(unit, unitsShort[i]);
             });
 
-            // remove parentheses
+            // remove parentheses en alles ertussenin
             ingredient = ingredient.replace(/ *\([^)]*\) */g, " ");
 
             // parse ingredients into count, unit and ingredient
@@ -60,7 +60,7 @@ export default class Recipe {
                 objIng = {
                     count,
                     unit: arrIng[unitIndex],
-                    ingredient: arrIng.slice(unitIndex+1)
+                    ingredient: arrIng.slice(unitIndex+1).join(' ')
                 }
 
             } else if (parseInt(arrIng[0], 10)) {       // er is geen eenheid maar wel een getal (1 brood)
@@ -82,9 +82,15 @@ export default class Recipe {
         this.ingredients = newIngredients;
     }
 
-    updateServings () {
+    updateServings (type) {     // type voor meer/minder porties
         //servings
+        const newServings = type === 'dec' ? this.servings - 1 : this.servings + 1; // als het aantal servings omlaag gaat ('dec' voor 'decrease'), wordt newServings gelijk aan this.servings-1, anders aan dat+1
 
         //ingredients
+        this.ingredients.forEach(ing => {
+            ing.count *= (newServings / this.servings);     // aantal = aantal maal de 'groeifactor', zoals 5/4 of 3/4
+        });
+
+        this.servings = newServings;    // het nieuwe aantal opslaan in de oude variabele (die we net nog nodig hadden voor de groeifactor)
     }
 }
