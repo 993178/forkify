@@ -2,9 +2,11 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import List from './models/List';
+import Likes from './models/Likes';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
 import * as listView from './views/listView';
+import * as likesView from './views/likesView'; // klinkt naar een lijkschouwing...! O_O
 import { elements, renderLoader, clearLoader } from './views/base';
 
 
@@ -14,7 +16,6 @@ import { elements, renderLoader, clearLoader } from './views/base';
 // - shopping list object
 // - liked recipes
 const state = {};
-window.state = state;   // FOR TESTING
 
 //      SEARCH CONTROLLER
 
@@ -89,9 +90,13 @@ const recipeController = async () => {
             state.recipe.calcServings();
             // render recipe
             clearLoader();
-            recipeView.renderRecipe(state.recipe);
+            recipeView.renderRecipe(
+                state.recipe, 
+                state.likes.isLiked(id)
+            );
 
         } catch (error) {
+            console.log(error);
             alert('That darn recipe just won\'t show up, I wouldn\'t take it if I were you!')
         }
     }
@@ -107,7 +112,7 @@ const recipeController = async () => {
 
 // LIST CONTROLLER
 
-const listController = async () => {
+const listController = () => {
     // create a new list IF there is none yet
     if (!state.list) state.list = new List();
 
@@ -136,6 +141,36 @@ elements.shopping.addEventListener('click', e => {
 });
 
 
+// LIKE CONTROLLER
+
+const likeController = () => {
+    if (!state.likes) state.likes = new Likes();
+    const currentID = state.recipe.id;
+    if (!state.likes.isLiked(currentID)) {      // als dit recept NIET al geliket wordt
+        const newLike = state.likes.addLike(currentID, state.recipe.title, state.recipe.author, state.recipe.image);
+        // toggle like button (die heeft ander uiterlijk voor wel/niet geliket)
+        likesView.toggleLikeBtn(true);  // haah, best maf om er gewoon true in te gooien
+        // add like to UI list
+        likesView.renderLike(newLike);
+    } else {
+        state.likes.deleteLike(currentID);
+        //toggle like button
+        likesView.toggleLikeBtn(false);
+        //remove from UI list
+        likesView.deleteLike(currentID);
+    }
+    likesView.toggleLikeMenu(state.likes.getNumLikes());
+}
+
+// restore liked recipes on page when page loads
+window.addEventListener('load', () => {
+    state.likes = new Likes();  // de pagina wordt herladen, we maken een nieuwe likes-key in de state want die was leeg
+    state.likes.readStorage();  // we checken of er likes in localStorage staan en zo ja, dan slaan we ze weer op in de state
+    likesView.toggleLikeMenu(state.likes.getNumLikes());    // en activeren het menu
+    state.likes.likes.forEach(like => likesView.renderLike(like));   // iedere like uit de storage (die array heet ook likes) moet ook weer opnieuw gerenderd worden
+})
+
+
 // handling recipe button clicks
 
 elements.recipe.addEventListener('click', e => {        // we kunnen niet de knop zelf rechtstreeks selecteren, want die bestaat bij het loaden nog niet. Dus we selecteren het eerste ouderelement dat er al wel is en bepalen dan wat er moet gebeuren adhv de target, die aangeeft waar precies geklikt werd
@@ -152,7 +187,8 @@ elements.recipe.addEventListener('click', e => {        // we kunnen niet de kno
     } else if (e.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
         // add to shopping list button is clicked
         listController();
+    } else if (e.target.matches('.recipe__love, .recipe__love *')) {
+        // like button is clicked
+        likeController();
     }
 });
-
-window.l = new List();

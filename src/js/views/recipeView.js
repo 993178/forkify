@@ -7,19 +7,20 @@ export const clearRecipe = () => {
 
 const formatCount = count => {
     if (count) {
-        const [int, dec] = count.toString().split('.').map(el => parseInt(el, 10));     // we pakken count, veranderen die van een getal in een string, splitsen die op bij de punt, mappen beide delen weer in een getal en destructuren ze in twee aparte variabelen
+        const newCount = Math.round(count * 10000) / 10000; // er gebeurde wat raars soms met de aantallen (stond er 0.3333333333), dus we ronden het af op 4 decimalen. Omdat Math.round niet aan decimalen doet, vermenigvuldigen we met 10000...
+        const [int, dec] = newCount.toString().split('.').map(el => parseInt(el, 10));     // we pakken newCount, veranderen die van een getal in een string, splitsen die op bij de punt, mappen beide delen weer in een getal en destructuren ze in twee aparte variabelen
 
-        if (!dec) return count; // als count alleen maar 2 ofzo is
+        if (!dec) return newCount; // als newCount alleen maar 2 ofzo is
 
-        if (int === 0) {        // als count 0.5 ofzo is
-            const fr = new Fraction(count);     // dit Fraction-ding verandert getallen met decimalen in breuken, blijkbaar door de input terug te geven in teller en noemer
+        if (int === 0) {        // als newCount 0.5 ofzo is
+            const fr = new Fraction(newCount);     // dit Fraction-ding verandert getallen met decimalen in breuken, blijkbaar door de input terug te geven in teller en noemer
             return `${fr.numerator}/${fr.denominator}`;
         } else {
-            const fr = new Fraction(count - int);       // we willen alleen een breuk maken van de decimalen, niet de helen, en bij het splitsen is de . verloren gegaan, dus de dec is nu een heel getal en niet meer .5 ofzo. Dus die zou je ook nog door 10 kunnen delen en dan aan Fraction voeren
+            const fr = new Fraction(newCount - int);       // we willen alleen een breuk maken van de decimalen, niet de helen, en bij het splitsen is de . verloren gegaan, dus de dec is nu een heel getal en niet meer .5 ofzo. Dus die zou je ook nog door 10 kunnen delen en dan aan Fraction voeren
             return `${int} ${fr.numerator}/${fr.denominator}`;
         }
     }
-    return '?';     // zodat er, als er geen count is omdat er iets raars mee is, iig geen 'undefined' op die site staat
+    return '?';     // zodat er, als er geen (new)Count is omdat er iets raars mee is, iig geen 'undefined' op die site staat
 };
 
 const createIngredient = ingredient => `
@@ -35,7 +36,7 @@ const createIngredient = ingredient => `
     </li>
 `;
 
-export const renderRecipe = recipe => {
+export const renderRecipe = (recipe, isLiked) => {
     const markup = `
         <figure class="recipe__fig">
             <img src="${recipe.img}" alt="${recipe.title}" class="recipe__img">
@@ -74,7 +75,7 @@ export const renderRecipe = recipe => {
             </div>
             <button class="recipe__love">
                 <svg class="header__likes">
-                    <use href="img/icons.svg#icon-heart-outlined"></use>
+                    <use href="img/icons.svg#icon-heart${isLiked ? '' : '-outlined'}"></use>
                 </svg>
             </button>
         </div>

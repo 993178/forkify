@@ -17,10 +17,10 @@ export const highlightSelected = id => {
         el.classList.remove('results__link--active');
     })
 
-    document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active');    // waarmee je het element met die specifieke href kunt selecteren...! a is van 'attribute'. Vervolgens voeg je dus een class toe aan dat element die zorgt voor de verandering in opmaak die je wilt
+    document.querySelector(`.results__link[href="#${id}"]`).classList.add('results__link--active');    // waarmee je het element met die specifieke href kunt selecteren...! Vervolgens voeg je dus een class toe aan dat element die zorgt voor de verandering in opmaak die je wilt (overigens is bij Jonas op mysterieuze wijze het hekje verdwenen en vervangen door een asterisk tussen href en =)
 }
 
-const limitRecipeTitle = (title, limit = 17) => {   // Jonas wil graag de titel inkorten tot enkele hele woorden als die nu langer is dan één regel. (Categorie waarom makkelijk doen als het moeilijk kan)
+export const limitRecipeTitle = (title, limit = 17) => {   // Jonas wil graag de titel inkorten tot enkele hele woorden als die nu langer is dan één regel. (Categorie waarom makkelijk doen als het moeilijk kan)
     const newTitle = [];                            // (Persoonlijk denk ik dat halve woorden een stuk beter zijn dan een recept dat alleen maar "beef & ..." heet.)
     if (title.length > limit) {                     // Als de lengte van de titel meer dan 17 karakters is,
         title.split(' ').reduce((teller, cur) => {  // splitsen we de titel op in individuele woorden door de spaties als afbreekpunt te gebruiken
